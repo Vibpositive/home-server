@@ -1,0 +1,79 @@
+version: '3'
+
+services:
+  radarr:
+    image: linuxserver/radarr
+    container_name: radarr
+    restart: unless-stopped
+    ports:
+      - 7878:7878
+    volumes:
+      - ./radarr:/config
+      - /Users/gabrieloliveira/home-server/movies:/movies
+      - /Users/gabrieloliveira/home-server/downloading:/downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
+    networks:
+      - media_network
+
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    restart: unless-stopped
+    ports:
+      - 8989:8989
+    volumes:
+      - ./sonarr:/config
+      - /Users/gabrieloliveira/home-server-2/tvshows:/tvshows
+      - /Users/gabrieloliveira/home-server-2/downloading:/downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
+    networks:
+      - media_network
+
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+    volumes:
+      - ./qbittorrent:/config
+      - /Users/gabrieloliveira/home-server-2/downloading:/downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
+    networks:
+      - media_network
+
+  jackett:
+    image: linuxserver/jackett
+    container_name: jackett
+    restart: unless-stopped
+    ports:
+      - 9118:9117
+    volumes:
+      - ./jackett:/config
+      - /Users/gabrieloliveira/home-server-2/downloading:/downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
+    networks:
+      - media_network
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    restart: unless-stopped
+    ports:
+      - 8191:8191
+    environment:
+      - PUID=1000
+      - PGID=1000
+    networks:
+      - media_network
+networks:
+  media_network:

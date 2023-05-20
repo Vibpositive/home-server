@@ -1,0 +1,26 @@
+[
+  {
+    "id": "sitelink",
+    "type": "inputstring",
+    "name": "Site Link",
+    "value": "https://extratorrent.st/"
+  },
+  {
+    "id": "cookieheader",
+    "type": "hiddendata",
+    "name": "CookieHeader",
+    "value": "PHPSESSID=1iSLexEvwZo73Kmx858MIeNSvbDPuy2C; a=TGSITJgrs0vWKzNcSDmEDCr1DTLu4gWT; _ym_uid=1684570997110311531; _ym_isad=2; cf_clearance=1Svijf_W_bdSupSQ0OZ4xZgUcnIx1SqoL0pE3Dh2Zj8-1684570994-0-150; _ym_d=1684570997; cf_chl_2=fe2ee34aec82d7c"
+  },
+  {
+    "id": "lasterror",
+    "type": "hiddendata",
+    "name": "LastError",
+    "value": null
+  },
+  {
+    "id": "tags",
+    "type": "inputtags",
+    "name": "Tags",
+    "value": ""
+  }
+]

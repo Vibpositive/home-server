@@ -1,0 +1,24 @@
+# Ignore system and editor files
+*~
+.*.swp
+.DS_Store
+
+# Ignore logs
+*.log
+*.log.*
+log/
+*.txt
+*.txt.*
+logs/
+# Ignore build artifacts and dependencies
+/build
+/dist
+/node_modules
+
+# Ignore environment-specific files
+.env
+.env.*
+
+# Ignore user-specific files
+.idea/
+.vscode/

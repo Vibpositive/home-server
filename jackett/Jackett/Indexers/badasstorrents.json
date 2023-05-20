@@ -1,0 +1,68 @@
+[
+  {
+    "id": "sitelink",
+    "type": "inputstring",
+    "name": "Site Link",
+    "value": "https://badasstorrents.com/"
+  },
+  {
+    "id": "cookieheader",
+    "type": "hiddendata",
+    "name": "CookieHeader",
+    "value": "PHPSESSID=mec9rtd3as8ttepaqsr5m4rvvd; cf_clearance=YpFdGTirxTy1L3xo4Gv_oppGnwUrv1EV6alea7qyhLQ-1684571008-0-250; cf_chl_2=b5199bc6791d3f9"
+  },
+  {
+    "id": "lasterror",
+    "type": "hiddendata",
+    "name": "LastError",
+    "value": null
+  },
+  {
+    "id": "downloadlink",
+    "type": "inputselect",
+    "name": "Download link",
+    "value": "magnet:?xt=",
+    "options": {
+      "/download/": ".torrent",
+      "magnet:?xt=": "magnet"
+    }
+  },
+  {
+    "id": "downloadlink(fallback)",
+    "type": "inputselect",
+    "name": "Download link (fallback)",
+    "value": "/download/",
+    "options": {
+      "/download/": ".torrent",
+      "magnet:?xt=": "magnet"
+    }
+  },
+  {
+    "id": "sortrequestedfromsite",
+    "type": "inputselect",
+    "name": "Sort requested from site",
+    "value": "date",
+    "options": {
+      "date": "created",
+      "seeds": "seeders",
+      "size": "size",
+      "title": "title"
+    }
+  },
+  {
+    "id": "orderrequestedfromsite",
+    "type": "inputselect",
+    "name": "Order requested from site",
+    "value": "desc",
+    "options": {
+      "desc": "desc",
+      "asc": "asc"
+    }
+  },
+  {
+    "id": "tags",
+    "type": "inputtags",
+    "name": "Tags",
+    "value": ""
+  }
+]

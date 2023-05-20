@@ -1,0 +1,26 @@
+[
+  {
+    "id": "sitelink",
+    "type": "inputstring",
+    "name": "Site Link",
+    "value": "https://www.36dm.club/"
+  },
+  {
+    "id": "cookieheader",
+    "type": "hiddendata",
+    "name": "CookieHeader",
+    "value": "Hm_lpvt_dfa59ae97c988b755b7dfc45bbf122ae=1684570991; Hm_lvt_dfa59ae97c988b755b7dfc45bbf122ae=1684570991; search_state=1684570988%7Cd58ec2036769425b70ff99769ebac34e"
+  },
+  {
+    "id": "lasterror",
+    "type": "hiddendata",
+    "name": "LastError",
+    "value": null
+  },
+  {
+    "id": "tags",
+    "type": "inputtags",
+    "name": "Tags",
+    "value": ""
+  }
+]
