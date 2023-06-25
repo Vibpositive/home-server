@@ -24,7 +24,7 @@ logs/
 .vscode/
 /qbittorrent/qBittorrent/BT_backup/queue
 sonnar/
-/sonnar/
+/sonarr/
 raddar/
 qbittorrent/
 /jackett
