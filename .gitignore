@@ -22,3 +22,8 @@ logs/
 # Ignore user-specific files
 .idea/
 .vscode/
+qbittorrent/qBittorrent/BT_backup/queue
+sonnar
+raddar
+qbittorrent
+jackett
