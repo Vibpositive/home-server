@@ -1,0 +1,104 @@
+version: '3'
+
+services:
+  # radarr:
+  #   image: linuxserver/radarr
+  #   container_name: radarr
+  #   restart: unless-stopped
+  #   # ports:
+  #   #   - 7878:7878
+  #   volumes:
+  #     - ./radarr:/config
+  #     - /mnt/1tb/movies:/mnt/media
+  #     - /mnt/1tb/downloading:/mnt/downloads
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #   networks:
+  #     - media_network
+
+  # sonarr:
+  #   image: linuxserver/sonarr
+  #   container_name: sonarr
+  #   restart: unless-stopped
+  #   ports:
+  #     - 8989:8989
+  #   volumes:
+  #     - ./sonarr:/config
+  #     - /mnt/1tb/tvshows:/mnt/media
+  #     - /mnt/1tb/downloading:/mnt/downloads
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #   networks:
+  #     - media_network
+
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+      - 8081:80
+      - 6881:6881
+      - 6881:6881/udp
+    volumes:
+      - ./qbittorrent:/config
+      - /mnt/1tb/downloading:/mnt/downloads
+      - /usr/share/nginx/html/css
+      - /usr/share/nginx/html/scripts
+      - /usr/share/nginx/html/images
+    environment:
+      - PUID=1000
+      - PGID=1000
+    networks:
+      - media_network
+
+  # jackett:
+  #   image: linuxserver/jackett
+  #   container_name: jackett
+  #   restart: unless-stopped
+  #   ports:
+  #     - 9117:9117
+  #   volumes:
+  #     - ./jackett:/config
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #   networks:
+  #     - media_network
+  # flaresolverr:
+  #   image: ghcr.io/flaresolverr/flaresolverr:latest
+  #   container_name: flaresolverr
+  #   restart: unless-stopped
+  #   ports:
+  #     - 8191:8191
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #   networks:
+  #     - media_network
+  
+  swag:
+    image: lscr.io/linuxserver/swag
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - URL=vibpositive-pizero
+      - SUBDOMAINS=wildcard
+      - VALIDATION=duckdns
+      - DUCKDNSTOKEN=15a56a92-d3c8-4538-a176-9bff87616d0f
+    volumes:
+      - /home/aptalca/appdata/swag:/config
+    ports:
+      - 443:443
+      - 80:80
+    restart: unless-stopped
+    networks:
+      - media_network
+networks:
+  media_network:
