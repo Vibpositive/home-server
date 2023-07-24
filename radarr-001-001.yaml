@@ -53,10 +53,10 @@ services:
       - PGID=1000
       - TZ=Europe/London
     volumes:
-      - ./readarr:/config
+      - ./readarr/config:/config
       - ./book:/books #optional
-    # ports:
-    #   - 8787:8787
+    ports:
+      - 8787:8787
     restart: unless-stopped
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
@@ -108,4 +108,3 @@ services:
     ports:
       # - 80:80  # HTTP port
       - 443:443  # HTTPS port (if you're using SSL)
-    
