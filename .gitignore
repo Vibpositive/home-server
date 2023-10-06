@@ -30,4 +30,5 @@ qbittorrent/
 /jackett
 radarr/
 readarr/
+readarr/*
 bazarr/
