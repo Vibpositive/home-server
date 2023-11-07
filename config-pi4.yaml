@@ -1,0 +1,21 @@
+tunnel: 8da7a65c-bff9-4380-85de-c0045af2c828
+credentials-file: /home/gabriel/.cloudflared/8da7a65c-bff9-4380-85de-c0045af2c828.json
+
+ingress:
+  - hostname: qbittorrent.vibpositive.uk
+    service: http://localhost:8080
+  - hostname: choose.vibpositive.uk
+    service: http://192.168.0.200:5055
+  - hostname: tv.vibpositive.uk
+    service: http://192.168.0.200:8989
+  - hostname: cinema.vibpositive.uk
+    service: http://192.168.0.200:7878
+  - hostname: jackett.vibpositive.uk
+    service: http://192.168.0.200:9117
+  - hostname: plex.vibpositive.uk 
+    service: http://192.168.0.200:32400
+  - hostname: files.vibpositive.uk 
+    service: http://192.168.0.200:8088
+  - hostname: ssh.vibpositive.uk 
+    service: ssh://192.168.0.200:22
+  - service: http_status:404
