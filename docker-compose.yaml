@@ -27,8 +27,7 @@ services:
       - 7878:7878
     volumes:
       - ./radarr:/config
-      - /mnt/1tb/movies:/mnt/media
-      - /mnt/1tb/movies:/mnt/downloads
+      - /mnt/media/:/media/
       # - /mnt/1tb/downloading:/mnt/downloads
     environment:
       - PUID=1000
@@ -42,10 +41,12 @@ services:
     #   # - 9898:9898
     volumes:
       - ./sonarr:/config
-      - /mnt/1tb/tvshows:/mnt/media
+      - /mnt/media/:/media/
     environment:
       - PUID=1000
       - PGID=1000
+      - DOCKER_MODS=ghcr.io/themepark-dev/theme.park:plex
+      - TP_ADDON=plex
     # networks:
     #   - media_network
   qbittorrent:
@@ -59,38 +60,70 @@ services:
     #   - 6881:6881/udp
     volumes:
       - ./qbittorrent:/config
-      - /mnt/1tb/:/downloads
+      - /mnt/media/:/media/
+      - ./temp/:/temp/
     environment:
       - PUID=1000
       - PGID=1000
-  readarr:
-    image: lscr.io/linuxserver/readarr:develop
-    container_name: readarr
+  # readarr:
+  #   image: lscr.io/linuxserver/readarr:develop
+  #   container_name: readarr
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=Europe/London
+  #   volumes:
+  #     - ./readarr/config:/config
+  #     - /mnt/1tb/root:/mnt/root
+  #     - /mnt/1tb/books:/mnt/downloads
+  #   ports:
+  #     - 8787:8787
+  #   restart: unless-stopped
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/London
-    volumes:
-      - ./readarr/config:/config
-      - /mnt/1tb/root:/mnt/root
-      - /mnt/1tb/books:/mnt/downloads
+      - LOG_LEVEL=debug
+      - TZ=Asia/Tokyo
     ports:
-      - 8787:8787
+      - 5055:5055
+    volumes:
+      - ./overseerr/:/app/config
     restart: unless-stopped
-  bazarr:
-    image: lscr.io/linuxserver/bazarr:latest
-    container_name: bazarr
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - ./bazarr/:/config
-      # - /path/to/movies:/movies #optional
-      # - /path/to/tv:/tv #optional
+      - ./tautulli:/config
     ports:
-      - 6767:6767
+      - 8181:8181
     restart: unless-stopped
+  # filebot:
+  #     container_name: filebot
+  #     ports:
+  #         - '5800:5800'
+  #     volumes:
+  #         - ./filebot:/config:rw
+  #         - /mnt/media/:/storage:rw
+  #     image: jlesage/filebot
+  # bazarr:
+  #   image: lscr.io/linuxserver/bazarr:latest
+  #   container_name: bazarr
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=Etc/UTC
+  #   volumes:
+  #     - ./bazarr/:/config
+  #     - /mnt/media/movies/:/media/movies
+  #     - /mnt/media/shows/:/media/shows
+  #   ports:
+  #     - 6767:6767
+  #   restart: unless-stopped
   jackett:
     image: linuxserver/jackett
     container_name: jackett
@@ -113,28 +146,40 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
+  filebrowser:
+    container_name: filebrowser
+    image: hurlenko/filebrowser
+    user: "1000:1000"
+    ports:
+      - 8088:8080
+    volumes:
+      - /mnt/media/:/data
+      - ./filebrowser/config:/config
+    environment:
+      - FB_BASEURL=/filebrowser
+    restart: always
   #   # networks:
   #   #   - media_network
-  nginx:
-    image: nginx
-    container_name: nginx
-    restart: unless-stopped
-    volumes:
-      - ./nginx/radarr-001-001.conf:/etc/nginx/nginx.conf:ro
-      # - ./nginx/ssl/nginx-selfsigned.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
-      # - ./nginx/ssl/nginx-selfsigned.key:/etc/ssl/private/nginx-selfsigned.key:ro
-      # - ./nginx/ssl/localhost.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
-      # - ./nginx/ssl/localhost.key:/etc/ssl/private/nginx-selfsigned.key:ro
-      - ./nginx/ssl/home-server.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
-      - ./nginx/ssl/home-server.key:/etc/ssl/private/nginx-selfsigned.key:ro
-      - ./nginx/ssl/dhparam.pem:/etc/ssl/certs/dhparam.pem:ro
-    ports:
-      - 80:80  # HTTP port
-      - 443:443  # HTTPS port (if you're using SSL)
-    depends_on:
-      # - plex
-      - radarr
-      - sonarr
-      - jackett
-      - readarr
-      - bazarr
+  # nginx:
+  #   image: nginx
+  #   container_name: nginx
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./nginx/radarr-001-001.conf:/etc/nginx/nginx.conf:ro
+  #     # - ./nginx/ssl/nginx-selfsigned.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
+  #     # - ./nginx/ssl/nginx-selfsigned.key:/etc/ssl/private/nginx-selfsigned.key:ro
+  #     # - ./nginx/ssl/localhost.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
+  #     # - ./nginx/ssl/localhost.key:/etc/ssl/private/nginx-selfsigned.key:ro
+  #     - ./nginx/ssl/home-server.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
+  #     - ./nginx/ssl/home-server.key:/etc/ssl/private/nginx-selfsigned.key:ro
+  #     - ./nginx/ssl/dhparam.pem:/etc/ssl/certs/dhparam.pem:ro
+  #   ports:
+  #     - 80:80  # HTTP port
+  #     - 443:443  # HTTPS port (if you're using SSL)
+  #   depends_on:
+  #     # - plex
+  #     - radarr
+  #     - sonarr
+  #     - jackett
+  #     - readarr
+  #     - bazarr
