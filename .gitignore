@@ -32,3 +32,5 @@ radarr/
 readarr/
 readarr/*
 bazarr/
+overseerr
+overseerr/*
