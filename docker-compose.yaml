@@ -49,6 +49,18 @@ services:
       - TP_ADDON=plex
     # networks:
     #   - media_network
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ./prowlarr:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
   qbittorrent:
     image: linuxserver/qbittorrent
     container_name: qbittorrent
@@ -110,20 +122,20 @@ services:
   #         - ./filebot:/config:rw
   #         - /mnt/media/:/storage:rw
   #     image: jlesage/filebot
-  # bazarr:
-  #   image: lscr.io/linuxserver/bazarr:latest
-  #   container_name: bazarr
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=Etc/UTC
-  #   volumes:
-  #     - ./bazarr/:/config
-  #     - /mnt/media/movies/:/media/movies
-  #     - /mnt/media/shows/:/media/shows
-  #   ports:
-  #     - 6767:6767
-  #   restart: unless-stopped
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ./bazarr/:/config
+      - /mnt/media/movies/:/media/movies
+      - /mnt/media/shows/:/media/shows
+    ports:
+      - 6767:6767
+    restart: unless-stopped
   jackett:
     image: linuxserver/jackett
     container_name: jackett
