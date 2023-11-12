@@ -40,7 +40,7 @@ prowlarr
 prowlarr/*
 jellyfin
 jellyfin/*
-filebrowers
-filebrowers/*
+filebroweser
+filebrowsers/*
 filebot
 filebot*
