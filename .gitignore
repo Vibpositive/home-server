@@ -44,3 +44,9 @@ filebrowser
 filebrowser/*
 filebot
 filebot*
+grafana
+grafana*
+prometheus
+prometheus*
+traefik
+traefik*
