@@ -20,6 +20,7 @@ services:
   #     - ./plextraktsync:/app/config
 # =================================================================================================
   radarr:
+    platform: linux/arm64/v8
     image: linuxserver/radarr
     container_name: radarr
     restart: unless-stopped
@@ -33,6 +34,7 @@ services:
       - PUID=1000
       - PGID=1000
   sonarr:
+    platform: linux/arm64/v8
     image: linuxserver/sonarr
     container_name: sonarr
     restart: unless-stopped
@@ -50,6 +52,7 @@ services:
     # networks:
     #   - media_network
   prowlarr:
+    platform: linux/arm64/v8
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     environment:
@@ -62,6 +65,7 @@ services:
       - 9696:9696
     restart: unless-stopped
   qbittorrent:
+    platform: linux/arm64/v8
     image: linuxserver/qbittorrent
     container_name: qbittorrent
     restart: unless-stopped
@@ -92,6 +96,7 @@ services:
   #     - 8787:8787
   #   restart: unless-stopped
   overseerr:
+    platform: linux/arm64/v8
     image: sctx/overseerr:latest
     container_name: overseerr
     environment:
@@ -102,18 +107,19 @@ services:
     volumes:
       - ./overseerr/:/app/config
     restart: unless-stopped
-  tautulli:
-    image: lscr.io/linuxserver/tautulli:latest
-    container_name: tautulli
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-    volumes:
-      - ./tautulli:/config
-    ports:
-      - 8181:8181
-    restart: unless-stopped
+  # tautulli:
+  #   platform: linux/amd64
+  #   image: lscr.io/linuxserver/tautulli:latest
+  #   container_name: tautulli
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=Etc/UTC
+  #   volumes:
+  #     - ./tautulli:/config
+  #   ports:
+  #     - 8181:8181
+  #   restart: unless-stopped
   # filebot:
   #     container_name: filebot
   #     ports:
@@ -123,6 +129,8 @@ services:
   #         - /mnt/media/:/storage:rw
   #     image: jlesage/filebot
   bazarr:
+    platform: linux/arm64/v8
+    # platform: linux/arm64/v8
     image: lscr.io/linuxserver/bazarr:latest
     container_name: bazarr
     environment:
@@ -136,20 +144,22 @@ services:
     ports:
       - 6767:6767
     restart: unless-stopped
-  jackett:
-    image: linuxserver/jackett
-    container_name: jackett
-    restart: unless-stopped
-    ports:
-      - 9117:9117
-    volumes:
-      - ./jackett:/config
-    environment:
-      - PUID=1000
-      - PGID=1000
-    # networks:
-    #   - media_network
+  # jackett:
+  #   platform: linux/amd64
+  #   image: linuxserver/jackett
+  #   container_name: jackett
+  #   restart: unless-stopped
+  #   ports:
+  #     - 9117:9117
+  #   volumes:
+  #     - ./jackett:/config
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #   # networks:
+  #   #   - media_network
   flaresolverr:
+    platform: linux/arm64/v8
     image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
     restart: unless-stopped
@@ -159,6 +169,7 @@ services:
       - PUID=1000
       - PGID=1000
   filebrowser:
+    platform: linux/arm64/v8
     container_name: filebrowser
     image: hurlenko/filebrowser
     user: "1000:1000"
@@ -171,6 +182,7 @@ services:
       - FB_BASEURL=/filebrowser
     restart: always
   jellyfin:
+    platform: linux/arm64/v8
     image: lscr.io/linuxserver/jellyfin:latest
     container_name: jellyfin
     devices:
@@ -192,6 +204,158 @@ services:
       - 7359:7359/udp #optional
       - 1900:1900/udp #optional
     restart: unless-stopped
+  prometheus:
+    platform: linux/arm64/v8
+    image: prom/prometheus:latest
+    container_name: monitoring_prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/config:/etc/prometheus/
+      - ./prometheus/data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    expose:
+      - 9090
+    ports:
+      - 9090:9090
+    links:
+      - cadvisor:cadvisor
+      - node-exporter:node-exporter
+    networks:
+      - pi
+
+  node-exporter:
+    platform: linux/arm64/v8
+    image: prom/node-exporter:latest
+    container_name: monitoring_node_exporter
+    restart: unless-stopped
+    expose:
+      - 9100
+    networks:
+      - pi
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor-arm:v0.47.2
+    # platform: linux/arm64/v8
+    # platform: linux/amd64
+    container_name: monitoring_cadvisor
+    privileged: true
+    restart: unless-stopped
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    devices:
+      - /dev/kmsg
+    expose:
+      - 8080
+    networks:
+      - pi
+
+  grafana:
+    platform: linux/arm64/v8
+    image: grafana/grafana:latest
+    container_name: monitoring_grafana
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    links:
+      - prometheus:prometheus
+    volumes:
+      - ./grafana:/var/lib/grafana
+    environment:
+      - GF_USERS_ALLOW_SIGN_UP=false
+      # - GF_SERVER_DOMAIN=localhost
+      # - GF_SERVER_ROOT_URL=http://localhost/grafana
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.grafana.rule=PathPrefix(`/grafana{regex:$$|/.*}`)'
+      - 'traefik.http.services.grafana.loadbalancer.server.port=3000'
+      - 'traefik.frontend.headers.customRequestHeaders=Authorization:-'
+    networks:
+      - pi
+  # nginx:
+  #   build: nginx
+  #   restart: 'unless-stopped'
+  #   networks:
+  #     - pi
+  #   ports:
+  #     - '80:80'
+  #   depends_on:
+  #     - whoami
+
+  # traefik:
+  #   image: 'traefik:2.3'
+  #   container_name: 'traefik'
+  #   restart: 'unless-stopped'
+  #   ports:
+  #     - '80:80'
+  #     - '8080:8080'
+  #   volumes:
+  #     - '/var/run/docker.sock:/var/run/docker.sock:ro'
+  #     - './traefik/config/traefik.toml:/traefik.toml'
+  #   networks:
+  #     - pi
+
+  # whoami:
+  #   image: 'traefik/whoami'
+  #   restart: 'unless-stopped'
+  #   labels:
+  #     - 'traefik.enable=true'
+  #     - 'traefik.http.routers.whoami.rule=PathPrefix(`/whoami{regex:$$|/.*}`)'
+  #     - 'traefik.http.services.whoami.loadbalancer.server.port=80'
+  #   networks:
+  #     - pi
+#   telegraf:
+#     image: telegraf:1.16
+#     container_name: telegraf
+#     restart: always
+#     volumes:
+#       - /var/run/docker.sock:/var/run/docker.sock 
+#       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+#     links:
+#       - influxdb
+#     ports:
+#       - "8092:8092/udp"
+#       - "8094:8094"
+#       - "8125:8125/udp"
+#     networks:
+#       - tick
+
+#   influxdb:
+#     image: influxdb:1.8
+#     container_name: influxdb
+#     restart: always
+#     volumes:
+#       - ./influxdb/data:/var/lib/influxdb
+#     ports:
+#       - "8086:8086"
+#     networks:
+#       - tick
+
+#   chronograf:
+#     image: chronograf:1.8
+#     container_name: chronograf
+#     restart: always
+#     environment:
+#       INFLUXDB_URL: http://influxdb:8086
+#     volumes:
+#       - ./chronograf/data:/var/lib/chronograf
+#     ports:
+#       - "8888:8888"
+#     links:
+#       - influxdb
+#     networks:
+#       - tick
+networks:
+#   tick:
+#     driver: bridge
+  pi:
+    driver: bridge
+
   #   # networks:
   #   #   - media_network
   # nginx:
