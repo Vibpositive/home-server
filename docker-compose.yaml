@@ -12,13 +12,6 @@ services:
   #   labels:
   #     ofelia.job-run.plextraktsync.schedule: "@every 6h"
   #     ofelia.job-run.plextraktsync.container: "plextraktsync"
-  # plextraktsync:
-  #   image: ghcr.io/taxel/plextraktsync:latest
-  #   container_name: plextraktsync
-  #   command: sync
-  #   volumes:
-  #     - ./plextraktsync:/app/config
-# =================================================================================================
   radarr:
     platform: linux/arm64/v8
     image: linuxserver/radarr
@@ -82,28 +75,13 @@ services:
     #   - 6881:6881/udp
     volumes:
       - ./qbittorrent:/config
-      - /mnt/media/:/movies/
-      - /mnt/media2/:/shows/
+      - /mnt/media/:/media/
       - ./temp/:/temp/
     environment:
       - PUID=1000
       - PGID=1000
     networks:
       - pi
-  # readarr:
-  #   image: lscr.io/linuxserver/readarr:develop
-  #   container_name: readarr
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=Europe/London
-  #   volumes:
-  #     - ./readarr/config:/config
-  #     - /mnt/1tb/root:/mnt/root
-  #     - /mnt/1tb/books:/mnt/downloads
-  #   ports:
-  #     - 8787:8787
-  #   restart: unless-stopped
   overseerr:
     platform: linux/arm64/v8
     image: sctx/overseerr:latest
@@ -118,27 +96,6 @@ services:
     restart: unless-stopped
     networks:
       - pi
-  # tautulli:
-  #   platform: linux/amd64
-  #   image: lscr.io/linuxserver/tautulli:latest
-  #   container_name: tautulli
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=Etc/UTC
-  #   volumes:
-  #     - ./tautulli:/config
-  #   ports:
-  #     - 8181:8181
-  #   restart: unless-stopped
-  # filebot:
-  #     container_name: filebot
-  #     ports:
-  #         - '5800:5800'
-  #     volumes:
-  #         - ./filebot:/config:rw
-  #         - /mnt/media/:/storage:rw
-  #     image: jlesage/filebot
   bazarr:
     platform: linux/arm64/v8
     # platform: linux/arm64/v8
@@ -236,158 +193,6 @@ services:
     volumes:
        - ./jellyseerr:/app/config
     restart: unless-stopped
-#  prometheus:
-#    platform: linux/arm64/v8
-#    image: prom/prometheus:latest
-#    container_name: monitoring_prometheus
-#    restart: unless-stopped
-#    volumes:
-#      - ./prometheus/config:/etc/prometheus/
-#      - ./prometheus/data:/prometheus
-#    command:
-#      - '--config.file=/etc/prometheus/prometheus.yml'
-#      - '--storage.tsdb.path=/prometheus'
-#    expose:
-#      - 9090
-#    ports:
-#      - 9090:9090
-#    links:
-#      - cadvisor:cadvisor
-#      - node-exporter:node-exporter
-#    networks:
-#      - pi
-
-#  node-exporter:
-#    platform: linux/arm64/v8
-#    image: prom/node-exporter:latest
-#    container_name: monitoring_node_exporter
-#    restart: unless-stopped
-#    expose:
-#      - 9100
-#    networks:
-#      - pi
-
-#  cadvisor:
-#    # image: gcr.io/cadvisor/cadvisor-arm:v0.47.2
-#    image: zcube/cadvisor:latest
-#    # platform: linux/arm64/v8
-#    # platform: linux/amd64
-#    container_name: monitoring_cadvisor
-#    privileged: true
-#    restart: unless-stopped
-#    command:
-#      - "--docker_only=true"
-#      - "--housekeeping_interval=30s"
-#      - "--disable_metrics=accelerator,cpu_topology,disk,memory_numa,tcp,udp,percpu,sched,process,hugetlb,referenced_memory,resctrl,cpuset,advtcp"
-#    volumes:
-#      - /:/rootfs:ro
-#      - /var/run:/var/run:rw
-#      - /sys:/sys:ro
-#      - /var/lib/docker/:/var/lib/docker:ro
-#    devices:
-#      - /dev/kmsg
-#    expose:
-#      - 8080
-#    networks:
-#      - pi
-
-#  grafana:
-#    platform: linux/arm64/v8
-#    image: grafana/grafana:latest
-#    container_name: monitoring_grafana
-#    restart: unless-stopped
-#    ports:
-#      - 3000:3000
-#    links:
-#      - prometheus:prometheus
-#      - jellyfin:jellyfin
-#    volumes:
-#      - ./grafana:/var/lib/grafana
-#    environment:
-#      - GF_USERS_ALLOW_SIGN_UP=false
-#      # - GF_SERVER_DOMAIN=localhost
-#      # - GF_SERVER_ROOT_URL=http://localhost/grafana
-#      - GF_SERVER_SERVE_FROM_SUB_PATH=true
-#    labels:
-#      - 'traefik.enable=true'
-#      - 'traefik.http.routers.grafana.rule=PathPrefix(`/grafana{regex:$$|/.*}`)'
-#      - 'traefik.http.services.grafana.loadbalancer.server.port=3000'
-#      - 'traefik.frontend.headers.customRequestHeaders=Authorization:-'
-#    networks:
-#      - pi
-  # nginx:
-  #   build: nginx
-  #   restart: 'unless-stopped'
-  #   networks:
-  #     - pi
-  #   ports:
-  #     - '80:80'
-  #   depends_on:
-  #     - whoami
-
-  # traefik:
-  #   image: 'traefik:2.3'
-  #   container_name: 'traefik'
-  #   restart: 'unless-stopped'
-  #   ports:
-  #     - '80:80'
-  #     - '8080:8080'
-  #   volumes:
-  #     - '/var/run/docker.sock:/var/run/docker.sock:ro'
-  #     - './traefik/config/traefik.toml:/traefik.toml'
-  #   networks:
-  #     - pi
-
-  # whoami:
-  #   image: 'traefik/whoami'
-  #   restart: 'unless-stopped'
-  #   labels:
-  #     - 'traefik.enable=true'
-  #     - 'traefik.http.routers.whoami.rule=PathPrefix(`/whoami{regex:$$|/.*}`)'
-  #     - 'traefik.http.services.whoami.loadbalancer.server.port=80'
-  #   networks:
-  #     - pi
-#   telegraf:
-#     image: telegraf:1.16
-#     container_name: telegraf
-#     restart: always
-#     volumes:
-#       - /var/run/docker.sock:/var/run/docker.sock 
-#       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
-#     links:
-#       - influxdb
-#     ports:
-#       - "8092:8092/udp"
-#       - "8094:8094"
-#       - "8125:8125/udp"
-#     networks:
-#       - tick
-
-#   influxdb:
-#     image: influxdb:1.8
-#     container_name: influxdb
-#     restart: always
-#     volumes:
-#       - ./influxdb/data:/var/lib/influxdb
-#     ports:
-#       - "8086:8086"
-#     networks:
-#       - tick
-
-#   chronograf:
-#     image: chronograf:1.8
-#     container_name: chronograf
-#     restart: always
-#     environment:
-#       INFLUXDB_URL: http://influxdb:8086
-#     volumes:
-#       - ./chronograf/data:/var/lib/chronograf
-#     ports:
-#       - "8888:8888"
-#     links:
-#       - influxdb
-#     networks:
-#       - tick
 networks:
 #   tick:
 #     driver: bridge
