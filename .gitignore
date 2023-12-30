@@ -50,3 +50,5 @@ prometheus
 prometheus*
 traefik
 traefik*
+uptime-kuma
+uptime-kuma*
