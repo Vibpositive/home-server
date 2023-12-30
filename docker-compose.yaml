@@ -82,7 +82,8 @@ services:
     #   - 6881:6881/udp
     volumes:
       - ./qbittorrent:/config
-      - /mnt/media/:/media/
+      - /mnt/media/:/movies/
+      - /mnt/media2/:/shows/
       - ./temp/:/temp/
     environment:
       - PUID=1000
